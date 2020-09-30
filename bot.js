@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable consistent-return */
 /* eslint-disable prettier/prettier */
 /* eslint-disable no-shadow */
@@ -8,52 +9,60 @@
 /* eslint-disable vars-on-top */
 /* eslint-disable no-var */
 /* eslint-disable no-plusplus */
+// import { d1} from './package.json';
+const fs = require('fs');
+
+const { data } = JSON.parse(fs.readFileSync('../store.json', 'utf8'));
+
 require('dotenv').config();
 const { Telegraf } = require('telegraf');
+const translate = require('translate-google');
 const Markup = require('telegraf/markup');
 
 const bot = new Telegraf(process.env.token);
 
-var d1 = ['gg', 'hh', 'jj'];
+console.log(data);
+//node --experimental-json-modules
 
-// let d2 = [];
+var d1 = ['appple', 'goat', 'horse'];
+var d2 = ['яблоко', 'коза', 'лошадь'];
+var msgArr = [' ', ' '];
 
 bot.start((ctx) =>
   ctx.reply(
-    'Привет! Это бот учитель, скажи ему чему тебя обучить, и он задаст тебе вопрос!',
+    'Привет! Это бот учитель, скажи ему чему тебя обучить, и он задаст тебе вопрос! Для того, чтобы вписать новое слово нажми ВВЕСТИ СЛОВО, после напиши слово, после чего жми на ВВЕДИ ПЕРЕВОД и бот подберет перевод слова!',
     Markup.keyboard([['ВВЕСТИ СЛОВО'], ['УДАЛИТЬ'], ['НАЧАТЬ']]).extra()
   )
 );
 
 bot.hears('ВВЕСТИ СЛОВО', (ctx) =>
-  ctx.reply('Напиши слово', Markup.keyboard([['ВВЕДИ ПЕРЕВОД']]).extra())
+  ctx.reply('Напиши слово', Markup.keyboard([['ПЕРЕВЕСТИ']]).extra())
 );
 
-bot.hears('f', (ctx) => {
+bot.command('a', (ctx) => console.log(d1, d2));
+
+bot.hears('ПЕРЕВЕСТИ', (ctx) => {
   let el = 0;
-  d1.push(ctx.message.text);
+  i = msgArr[1];
+  console.log(msgArr);
+  d1.push(i);
   while (el < d1.length - 1) {
-    if (ctx.message.text == d1[el]) d1.pop();
-    // let i = ctx.message.text == d1[el] ? +1 : 0;
+    if (i == d1[el]) d1.pop();
     el++;
+  }
+  if (d1.length > d2.length) {
+    translate(d1[d1.length - 1], { from: 'en', to: 'ru' }).then((res) => {
+      d2.push(res);
+      ctx.reply(`твое слово - ${d1[d1.length - 1]}, а его перевод - ${d2[d2.length - 1]}`);
+    });
   }
 });
 
-// let message = (age < 3) ? 'Здравствуй, малыш!' :   'Какой необычный возраст!';
-
-// bot.help((ctx) => ctx.reply('Send me a sticker'));
-
-bot.on('sticker', (ctx) => ctx.reply('👍'));
-
-bot.hears('hi', (ctx) => ctx.reply(ctx.forwardMessage));
+bot.on('text', (ctx) => {
+  msg = ctx.message.text;
+  msgArr.shift();
+  msgArr.push(msg);
+  console.log(msgArr);
+});
 
 bot.launch();
-
-// update: {
-//   update_id: 575113499,
-//   message: {
-//     message_id: 396,
-//     from: [Object],
-//     chat: [Object],
-//     date: 1600000676,
-//     text: 'hi'

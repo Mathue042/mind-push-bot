@@ -2,6 +2,7 @@
   "name": "telegram_bot",
   "version": "1.0.0",
   "main": "bot.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node bot.js"
@@ -21,7 +22,9 @@
   },
   "dependencies": {
     "dotenv": "^8.2.0",
-    "telegraf": "^3.38.0"
+    "fs": "0.0.1-security",
+    "telegraf": "^3.38.0",
+    "translate-google": "^1.4.3"
   },
   "repository": {
     "type": "git",
